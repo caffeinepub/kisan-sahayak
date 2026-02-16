@@ -1,0 +1,89 @@
+{
+  "kind": "build_request",
+  "title": "Prefill per-slide images from provided Google queries and add robust handling for non-direct image URLs (plus slide 11 screenshot upload)",
+  "projectName": "Kisan Sahayak",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-5",
+      "text": "Pre-fill the app’s per-slide image settings for slides 1–10 using the exact URLs provided by the user (Google Images search query URLs), mapped to the corresponding slide numbers, so the user sees images configured immediately when opening each slide’s image panel.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Slide 1 — Title Slide\nhttps://www.google.com/search?tbm=isch&q=farmer+using+smartphone+in+field\n\n...\n\nSlide 10 — Conclusion\nhttps://www.google.com/search?tbm=isch&q=happy+farmer+harvest+success"
+        ]
+      },
+      "acceptanceCriteria": [
+        "On first load (fresh browser session), slides 1–10 show an image URL already filled in that matches the user-provided URL for that slide exactly.",
+        "The pre-filled mapping is: (1) https://www.google.com/search?tbm=isch&q=farmer+using+smartphone+in+field, (2) https://www.google.com/search?tbm=isch&q=agriculture+field+research+workers, (3) https://www.google.com/search?tbm=isch&q=manual+farming+labour+hard+work, (4) https://www.google.com/search?tbm=isch&q=farmer+portrait+rural+worker, (5) https://www.google.com/search?tbm=isch&q=community+training+agriculture+workshop, (6) https://www.google.com/search?tbm=isch&q=smartphone+app+in+hand+outdoor, (7) https://www.google.com/search?tbm=isch&q=farmer+using+mobile+phone+in+field, (8) https://www.google.com/search?tbm=isch&q=successful+agriculture+growth+farm, (9) https://www.google.com/search?tbm=isch&q=smart+farming+technology+drone, (10) https://www.google.com/search?tbm=isch&q=happy+farmer+harvest+success.",
+        "If a user edits/removes an image for a slide, that change takes effect immediately in preview and export for that slide."
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Add clear, English in-app validation and guidance for image URLs that are not direct image assets (including Google Images search result URLs like `google.com/search?tbm=isch...`), so users understand why an image may not load/export and how to fix it by providing a direct image URL.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "https://www.google.com/search?tbm=isch&q=farmer+using+smartphone+in+field"
+        ]
+      },
+      "acceptanceCriteria": [
+        "When an image URL looks like a Google Images search results page (contains `google.com/search` and `tbm=isch`) or otherwise fails to load, the UI shows an English message explaining that the link is not a direct image file and may not embed in the slide/export.",
+        "The message provides actionable steps in English (e.g., open the link, click an image, then use a direct image address URL that typically ends in .jpg/.png/.webp, or use an upload option if available).",
+        "The slide preview does not crash when such URLs are used; it shows a stable error state with the guidance message.",
+        "Export still completes even if some images fail to load; the exported file includes the same guidance/error placeholder for failed images rather than breaking the export."
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Add a slide 11-specific option to use a screenshot of the user’s actual prototype by allowing the user to upload an image file from their device for slide 11, and ensure that uploaded image appears in the on-screen slide preview and is embedded in the exported deck.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Slide 11 — Prototype Access\nUse screenshot of your actual prototype"
+        ]
+      },
+      "acceptanceCriteria": [
+        "When slide 11 is selected, the image panel provides an English-labeled control to upload an image file (e.g., PNG/JPG) in addition to the URL input option.",
+        "After upload, slide 11 renders the uploaded screenshot in the slide preview (without requiring a URL).",
+        "Export includes the slide 11 uploaded screenshot (embedded as a data URL or equivalent client-side embedding) so it remains visible when the exported file is opened offline.",
+        "Users can remove/replace the uploaded screenshot for slide 11 and the preview/export updates accordingly."
+      ]
+    }
+  ],
+  "constraints": [
+    "Frontend immutable paths must not be modified: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, and all files under frontend/src/components/ui.",
+    "Do not add backend services or external databases; keep functionality fully client-side for image prefill/validation/upload.",
+    "Do not implement scraping/parsing of Google Images search result pages to extract direct image URLs; only provide guidance and allow users to supply direct URLs or upload images.",
+    "Use English for any user-facing text added or changed by this build request."
+  ],
+  "nonGoals": [
+    "Automatically selecting a specific image from a Google Images search results page and embedding it without a direct URL.",
+    "Verifying image licensing/usage rights or automatically generating attribution text.",
+    "Implementing a true .pptx binary export (current export is HTML-based)."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-16T20:00:48.581Z",
+  "summary": "REQ-5/6/7 are largely implemented: slides 1–10 are prefilled with the specified Google Images search URLs, URL classification/guidance and stable preview/export placeholders are added, and slide 11 supports image upload with preview/export embedding via data URL. One REQ-5 acceptance criterion appears not fully met: URL edits may require an explicit save action rather than applying immediately.",
+  "missing_requirements": [
+    {
+      "id": "REQ-5",
+      "requirement": "If a user edits/removes an image for a slide, that change takes effect immediately in preview and export for that slide.",
+      "reason": "The image URL/caption editing flow appears to require an explicit save action (handleSave) to push changes into the Zustand store, so edits may not take effect immediately as typed. Removal does update immediately, but immediate edit propagation is not evidenced.",
+      "evidence": [
+        "frontend/src/components/deck/SlideImageFields.tsx",
+        "frontend/src/components/deck/useDeckState.ts"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Added pptxgenjs dependency and related type declarations, implying/adding PowerPoint export library support beyond the requested HTML-based export approach.",
+      "reason": "The BuildRequest explicitly lists as a non-goal: implementing a true .pptx binary export (current export is HTML-based). Adding pptxgenjs (and its .d.ts) is not requested and may conflict with the stated non-goal.",
+      "evidence": [
+        "frontend/package.json",
+        "frontend/src/pptx/pptxgenjs.d.ts",
+        "frontend-file-summaries.txt"
+      ]
+    }
+  ],
+  "confidence": 0.74,
+  "changed_files": [
+    "frontend-file-summaries.txt",
+    "frontend/src/components/deck/RemoteImage.tsx",
+    "frontend/src/components/deck/SlideCanvas.tsx",
+    "frontend/src/components/deck/SlideImageFields.tsx",
+    "frontend/src/components/deck/imageUrlUtils.ts",
+    "frontend/src/components/deck/useDeckState.ts",
+    "frontend/src/pptx/exportDeckToPptx.ts",
+    "project_state.json"
+  ]
+}

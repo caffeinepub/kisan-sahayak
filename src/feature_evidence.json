@@ -1,0 +1,66 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-pre-fill-the-app-s-per-slide-image-settings-for-slides-1-10-using-the-exact-urls-provided-by-the-user-google-images-search-query-urls-mapped-to-the-corresponding-slide-numbers-so-the-user-sees-images-configured-immediately-when-opening-each-slide-s-image-panel",
+      "featureTitle": "Pre-fill the app’s per-slide image settings for slides 1–10 using the exact URLs provided by the user (Google Images search query URLs), mapped to the corresponding slide numbers, so the user sees images configured immediately when opening each slide’s image panel.",
+      "files": [
+        "frontend/src/components/deck/SlideImageFields.tsx",
+        "frontend/src/components/deck/useDeckState.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-clear-english-in-app-validation-and-guidance-for-image-urls-that-are-not-direct-image-assets-including-google-images-search-result-urls-like-google-com-search-tbm-isch-so-users-understand-why-an-image-may-not-load-export-and-how-to-fix-it-by-providing-a-direct-image-url",
+      "featureTitle": "Add clear, English in-app validation and guidance for image URLs that are not direct image assets (including Google Images search result URLs like `google.com/search?tbm=isch...`), so users understand why an image may not load/export and how to fix it by providing a direct image URL.",
+      "files": [
+        "frontend/src/components/deck/RemoteImage.tsx",
+        "frontend/src/components/deck/SlideImageFields.tsx",
+        "frontend/src/components/deck/imageUrlUtils.ts",
+        "frontend/src/pptx/exportDeckToPptx.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-slide-11-specific-option-to-use-a-screenshot-of-the-user-s-actual-prototype-by-allowing-the-user-to-upload-an-image-file-from-their-device-for-slide-11-and-ensure-that-uploaded-image-appears-in-the-on-screen-slide-preview-and-is-embedded-in-the-exported-deck",
+      "featureTitle": "Add a slide 11-specific option to use a screenshot of the user’s actual prototype by allowing the user to upload an image file from their device for slide 11, and ensure that uploaded image appears in the on-screen slide preview and is embedded in the exported deck.",
+      "files": [
+        "frontend/src/components/deck/SlideCanvas.tsx",
+        "frontend/src/components/deck/SlideImageFields.tsx",
+        "frontend/src/components/deck/useDeckState.ts",
+        "frontend/src/pptx/exportDeckToPptx.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

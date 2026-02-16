@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 5,
+  "summary": "Create a professional academic PowerPoint slide deck for the \"Kisan Sahayak\" project using the provided slide text verbatim, formatted with a minimal white design and blue accents, consistent fonts, and clean icons, using only real (non-AI) images sourced from Google.",
+  "architectural_notes": [
+    "Do not alter provided slide wording; only apply formatting into slides.",
+    "Design constraints: minimal design, white background, blue accent, clean icons, consistent font across slides.",
+    "Image sourcing constraint: do not use AI-generated images; use only real images sourced from Google.",
+    "User provided per-slide image sources as Google Images search query URLs (not direct image URLs); workflow must select a specific real image per slide and paste its direct image URL (or upload), with optional attribution/caption."
+  ],
+  "known_issues": [
+    "Image sourcing from Google may require verifying usage rights/attribution before inclusion in the PowerPoint.",
+    "Google Images search result links (tbm=isch) are not direct image assets and may not embed/export correctly; need direct image URLs or downloaded/uploaded images."
+  ],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-create-a-slide-deck-in-the-frontend-that-formats-the-provided-11-slides-exactly-as-given-verbatim-wording-into-a-professional-academic-presentation-with-a-minimal-design-white-background-blue-accent-color-clean-icons-and-consistent-font-across-all-slides",
+      "title": "Create a slide deck in the frontend that formats the provided 11 slides exactly as given (verbatim wording) into a professional academic presentation with a minimal design: white background, blue accent color, clean icons, and consistent font across all slides.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-slide-navigation-and-presentation-viewing-ux-in-the-frontend-thumbnail-list-and-or-previous-next-controls-so-the-user-can-review-the-formatted-slides-in-order-before-exporting",
+      "title": "Implement slide navigation and presentation viewing UX in the frontend (thumbnail list and/or previous/next controls) so the user can review the formatted slides in order before exporting.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-provide-an-export-function-to-download-the-formatted-deck-as-a-powerpoint-pptx-file-that-preserves-the-minimal-white-blue-styling-consistent-fonts-and-slide-structure",
+      "title": "Provide an export function to download the formatted deck as a PowerPoint (.pptx) file that preserves the minimal white + blue styling, consistent fonts, and slide structure.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-support-for-using-only-real-non-ai-images-by-allowing-the-user-to-supply-image-urls-e-g-from-google-per-slide-plus-optional-caption-attribution-text-fields-and-include-those-images-in-both-the-on-screen-deck-and-the-exported-pptx",
+      "title": "Add support for using only real (non-AI) images by allowing the user to supply image URLs (e.g., from Google) per slide, plus optional caption/attribution text fields, and include those images in both the on-screen deck and the exported .pptx.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-pre-fill-the-app-s-per-slide-image-settings-for-slides-1-10-using-the-exact-urls-provided-by-the-user-google-images-search-query-urls-mapped-to-the-corresponding-slide-numbers-so-the-user-sees-images-configured-immediately-when-opening-each-slide-s-image-panel",
+      "title": "Pre-fill the app’s per-slide image settings for slides 1–10 using the exact URLs provided by the user (Google Images search query URLs), mapped to the corresponding slide numbers, so the user sees images configured immediately when opening each slide’s image panel.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-clear-english-in-app-validation-and-guidance-for-image-urls-that-are-not-direct-image-assets-including-google-images-search-result-urls-like-google-com-search-tbm-isch-so-users-understand-why-an-image-may-not-load-export-and-how-to-fix-it-by-providing-a-direct-image-url",
+      "title": "Add clear, English in-app validation and guidance for image URLs that are not direct image assets (including Google Images search result URLs like `google.com/search?tbm=isch...`), so users understand why an image may not load/export and how to fix it by providing a direct image URL.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-slide-11-specific-option-to-use-a-screenshot-of-the-user-s-actual-prototype-by-allowing-the-user-to-upload-an-image-file-from-their-device-for-slide-11-and-ensure-that-uploaded-image-appears-in-the-on-screen-slide-preview-and-is-embedded-in-the-exported-deck",
+      "title": "Add a slide 11-specific option to use a screenshot of the user’s actual prototype by allowing the user to upload an image file from their device for slide 11, and ensure that uploaded image appears in the on-screen slide preview and is embedded in the exported deck.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Format the provided Kisan Sahayak content into a professional academic PowerPoint with minimal white design, blue accents, clean icons, consistent fonts; do not change wording; use only real images from Google (no AI images).",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Kisan Sahayak",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
