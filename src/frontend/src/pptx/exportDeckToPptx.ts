@@ -2,27 +2,60 @@ import { slides } from '@/content/slides';
 import type { SlideImage } from '@/components/deck/useDeckState';
 import { classifyImageUrl, getExportPlaceholderText } from '@/components/deck/imageUrlUtils';
 
-// Since pptxgenjs cannot be added to the read-only package.json,
-// we'll create a simple HTML export that can be printed to PDF or copied to PowerPoint
-export async function exportDeckToPptx(slideImages: Record<number, SlideImage>) {
-  // Create HTML representation of slides
-  const htmlContent = await generateSlidesHTML(slideImages);
+const SLIDE_WIDTH = 960;
+const SLIDE_HEIGHT = 540;
+const ACCENT_COLOR = '#2563eb';
+
+export interface ExportResult {
+  success: boolean;
+  warnings: string[];
+  error?: string;
+}
+
+export async function exportDeckToPptx(slideImages: Record<number, SlideImage>): Promise<ExportResult> {
+  const warnings: string[] = [];
   
-  // Create a blob and download as HTML
-  const blob = new Blob([htmlContent], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'Kisan_Sahayak_Presentation.html';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  try {
+    // Check for non-embeddable images and collect warnings
+    for (const slideContent of slides) {
+      const slideImage = slideImages[slideContent.id];
+      if (slideImage && !slideImage.uploadedDataUrl) {
+        const classification = classifyImageUrl(slideImage.url);
+        if (classification.isGoogleImagesSearch || !classification.isLikelyDirectImage) {
+          warnings.push(`Slide ${slideContent.id}: Image cannot be embedded. Please use a direct image URL (ending in .jpg, .png, etc.) or upload the image file.`);
+        }
+      }
+    }
+    
+    // Create HTML representation of slides that can be imported to PowerPoint
+    const htmlContent = await generateSlidesHTML(slideImages);
+    
+    // Create a blob and download as HTML
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'Kisan_Sahayak_Presentation.html';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    return {
+      success: true,
+      warnings
+    };
+  } catch (error) {
+    console.error('Export failed:', error);
+    return {
+      success: false,
+      warnings,
+      error: error instanceof Error ? error.message : 'Unknown error occurred during export'
+    };
+  }
 }
 
 async function generateSlidesHTML(slideImages: Record<number, SlideImage>): Promise<string> {
-  const accentColor = '#2563eb';
-  
   let slidesHTML = '';
   
   for (const slideContent of slides) {
@@ -55,7 +88,7 @@ async function generateSlidesHTML(slideImages: Record<number, SlideImage>): Prom
         // For uploaded images or likely direct URLs, embed the image
         if (slideImage.uploadedDataUrl || urlClassification.isLikelyDirectImage) {
           imageHTML = `<div class="slide-image">
-             <img src="${escapeHtml(imageSource)}" alt="${escapeHtml(slideImage.caption || slideContent.title)}" onerror="this.parentElement.innerHTML='<div class=\\'image-error\\'>${escapeHtml(getExportPlaceholderText(slideImage.url))}</div>'" />
+             <img src="${escapeHtml(imageSource)}" alt="${escapeHtml(slideImage.caption || slideContent.title)}" onerror="this.parentElement.innerHTML='<div class=\\'image-error\\'>Image failed to load</div>'" />
              ${slideImage.caption ? `<p class="caption">${escapeHtml(slideImage.caption)}</p>` : ''}
            </div>`;
         } else {
@@ -64,7 +97,6 @@ async function generateSlidesHTML(slideImages: Record<number, SlideImage>): Prom
           imageHTML = `<div class="slide-image">
              <div class="image-placeholder">
                <p>${escapeHtml(placeholderText)}</p>
-               <p class="placeholder-url">URL provided: ${escapeHtml(slideImage.url)}</p>
              </div>
              ${slideImage.caption ? `<p class="caption">${escapeHtml(slideImage.caption)}</p>` : ''}
            </div>`;
@@ -108,8 +140,8 @@ async function generateSlidesHTML(slideImages: Record<number, SlideImage>): Prom
     }
     
     .slide {
-      width: 960px;
-      height: 540px;
+      width: ${SLIDE_WIDTH}px;
+      height: ${SLIDE_HEIGHT}px;
       background: white;
       margin: 0 auto 30px;
       position: relative;
@@ -149,7 +181,7 @@ async function generateSlidesHTML(slideImages: Record<number, SlideImage>): Prom
     .title-slide .divider {
       width: 96px;
       height: 4px;
-      background: ${accentColor};
+      background: ${ACCENT_COLOR};
       margin-bottom: 32px;
     }
     
@@ -161,7 +193,7 @@ async function generateSlidesHTML(slideImages: Record<number, SlideImage>): Prom
     
     /* Content Slide */
     .content-slide .slide-header {
-      border-bottom: 4px solid ${accentColor};
+      border-bottom: 4px solid ${ACCENT_COLOR};
       padding: 20px 48px;
     }
     
@@ -197,7 +229,7 @@ async function generateSlidesHTML(slideImages: Record<number, SlideImage>): Prom
     }
     
     .content-slide .bullets .bullet {
-      color: ${accentColor};
+      color: ${ACCENT_COLOR};
       font-size: 24px;
       line-height: 1;
       flex-shrink: 0;
@@ -213,6 +245,8 @@ async function generateSlidesHTML(slideImages: Record<number, SlideImage>): Prom
     .content-slide .slide-image img {
       width: 100%;
       height: auto;
+      max-height: 300px;
+      object-fit: contain;
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
@@ -233,13 +267,10 @@ async function generateSlidesHTML(slideImages: Record<number, SlideImage>): Prom
       font-size: 11px;
       color: #92400e;
       text-align: center;
-    }
-    
-    .content-slide .slide-image .image-placeholder .placeholder-url {
-      margin-top: 8px;
-      font-size: 10px;
-      color: #78350f;
-      word-break: break-all;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     
     .content-slide .slide-image .image-error {
@@ -262,19 +293,23 @@ async function generateSlidesHTML(slideImages: Record<number, SlideImage>): Prom
         margin: 0;
         box-shadow: none;
       }
+      
+      .instructions {
+        display: none;
+      }
     }
     
     .instructions {
-      width: 960px;
+      width: ${SLIDE_WIDTH}px;
       margin: 0 auto 30px;
       padding: 20px;
       background: #eff6ff;
-      border: 2px solid ${accentColor};
+      border: 2px solid ${ACCENT_COLOR};
       border-radius: 8px;
     }
     
     .instructions h3 {
-      color: ${accentColor};
+      color: ${ACCENT_COLOR};
       margin-bottom: 12px;
     }
     
@@ -290,18 +325,19 @@ async function generateSlidesHTML(slideImages: Record<number, SlideImage>): Prom
 </head>
 <body>
   <div class="instructions">
-    <h3>📋 Instructions to Create PowerPoint</h3>
+    <h3>📋 How to Convert This to PowerPoint (.pptx)</h3>
     <ol>
-      <li><strong>Print to PDF:</strong> Use your browser's print function (Ctrl+P / Cmd+P) and save as PDF</li>
-      <li><strong>Import to PowerPoint:</strong> Open PowerPoint → Insert → Pictures → select the PDF or take screenshots of each slide</li>
-      <li><strong>Alternative:</strong> Copy the content below and paste into PowerPoint slides manually</li>
+      <li><strong>Method 1 - Print to PDF then Import:</strong> Press Ctrl+P (or Cmd+P on Mac), select "Save as PDF", save the file, then open PowerPoint and import the PDF.</li>
+      <li><strong>Method 2 - Screenshot Each Slide:</strong> Take screenshots of each slide below and insert them into PowerPoint slides (16:9 format).</li>
+      <li><strong>Method 3 - Copy Content Manually:</strong> Copy the text and images from each slide and paste into PowerPoint.</li>
+      <li><strong>Best Results:</strong> For embedded images, use Method 1 or 2. Images with direct URLs (ending in .jpg, .png) will display correctly.</li>
     </ol>
   </div>
   
   ${slidesHTML}
   
   <script>
-    // Auto-print dialog on load (optional)
+    // Optional: Auto-print dialog on load
     // window.onload = () => window.print();
   </script>
 </body>

@@ -2,6 +2,7 @@ import { SlideCanvas } from './SlideCanvas';
 import { DeckNavigator } from './DeckNavigator';
 import { SlideImageFields } from './SlideImageFields';
 import { ExportPptxButton } from './ExportPptxButton';
+import { BulkImageUploadMapper } from './BulkImageUploadMapper';
 import { useDeckState } from './useDeckState';
 import { Presentation } from 'lucide-react';
 
@@ -45,7 +46,8 @@ export function DeckViewer() {
 
           {/* Right sidebar - Image controls */}
           <aside className="col-span-3">
-            <div className="sticky top-8">
+            <div className="sticky top-8 space-y-4">
+              <BulkImageUploadMapper />
               <SlideImageFields slideIndex={currentSlideIndex} />
             </div>
           </aside>

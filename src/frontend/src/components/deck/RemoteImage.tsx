@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ImageOff, AlertCircle } from 'lucide-react';
 import { classifyImageUrl, getImageLoadErrorMessage } from './imageUrlUtils';
 
@@ -17,10 +17,16 @@ export function RemoteImage({ url, alt, className = '', uploadedDataUrl }: Remot
   const imageSource = uploadedDataUrl || url;
   const urlClassification = classifyImageUrl(url);
 
+  // Reset loading/error state when the effective image source changes
+  useEffect(() => {
+    setLoading(true);
+    setError(false);
+  }, [imageSource]);
+
   // Show guidance placeholder proactively for known non-direct URLs
   if (!uploadedDataUrl && urlClassification.isGoogleImagesSearch) {
     return (
-      <div className={`flex flex-col items-center justify-center bg-amber-50 border-2 border-amber-300 rounded-lg p-4 ${className}`}>
+      <div className={`flex flex-col items-center justify-center bg-amber-50 border-2 border-amber-300 rounded-lg p-4 min-h-[200px] ${className}`}>
         <AlertCircle className="w-12 h-12 text-amber-600 mb-2" />
         <p className="text-xs text-amber-800 text-center font-semibold mb-1">
           Google Images Search URL
@@ -35,7 +41,7 @@ export function RemoteImage({ url, alt, className = '', uploadedDataUrl }: Remot
   if (error) {
     const errorMessage = getImageLoadErrorMessage(url);
     return (
-      <div className={`flex flex-col items-center justify-center bg-red-50 border-2 border-red-300 rounded-lg p-4 ${className}`}>
+      <div className={`flex flex-col items-center justify-center bg-red-50 border-2 border-red-300 rounded-lg p-4 min-h-[200px] ${className}`}>
         <ImageOff className="w-12 h-12 text-red-400 mb-2" />
         <p className="text-xs text-red-600 text-center font-semibold mb-1">
           Failed to Load Image
@@ -48,9 +54,9 @@ export function RemoteImage({ url, alt, className = '', uploadedDataUrl }: Remot
   }
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative min-h-[200px] ${className}`}>
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg z-10">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
         </div>
       )}
@@ -62,7 +68,7 @@ export function RemoteImage({ url, alt, className = '', uploadedDataUrl }: Remot
           setError(true);
           setLoading(false);
         }}
-        className={`w-full h-full object-cover rounded-lg ${loading ? 'opacity-0' : 'opacity-100'}`}
+        className={`w-full h-auto object-contain rounded-lg transition-opacity duration-200 ${loading ? 'opacity-0' : 'opacity-100'}`}
       />
     </div>
   );

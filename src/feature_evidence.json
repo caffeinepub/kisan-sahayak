@@ -2,32 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-pre-fill-the-app-s-per-slide-image-settings-for-slides-1-10-using-the-exact-urls-provided-by-the-user-google-images-search-query-urls-mapped-to-the-corresponding-slide-numbers-so-the-user-sees-images-configured-immediately-when-opening-each-slide-s-image-panel",
-      "featureTitle": "Pre-fill the app’s per-slide image settings for slides 1–10 using the exact URLs provided by the user (Google Images search query URLs), mapped to the corresponding slide numbers, so the user sees images configured immediately when opening each slide’s image panel.",
-      "files": [
-        "frontend/src/components/deck/SlideImageFields.tsx",
-        "frontend/src/components/deck/useDeckState.ts"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-5"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-clear-english-in-app-validation-and-guidance-for-image-urls-that-are-not-direct-image-assets-including-google-images-search-result-urls-like-google-com-search-tbm-isch-so-users-understand-why-an-image-may-not-load-export-and-how-to-fix-it-by-providing-a-direct-image-url",
-      "featureTitle": "Add clear, English in-app validation and guidance for image URLs that are not direct image assets (including Google Images search result URLs like `google.com/search?tbm=isch...`), so users understand why an image may not load/export and how to fix it by providing a direct image URL.",
+      "featureId": "feature-fix-the-on-screen-slide-preview-so-assigned-images-actually-render-at-a-visible-size-whenever-a-slide-has-either-a-an-uploaded-image-data-url-or-b-a-direct-image-url-without-collapsing-to-zero-height-or-being-hidden-by-the-loading-overlay",
+      "featureTitle": "Fix the on-screen slide preview so assigned images actually render at a visible size whenever a slide has either (a) an uploaded image data URL or (b) a direct image URL, without collapsing to zero height or being hidden by the loading overlay.",
       "files": [
         "frontend/src/components/deck/RemoteImage.tsx",
-        "frontend/src/components/deck/SlideImageFields.tsx",
-        "frontend/src/components/deck/imageUrlUtils.ts",
-        "frontend/src/pptx/exportDeckToPptx.ts"
+        "frontend/src/components/deck/SlideCanvas.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -37,17 +16,35 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-6"
+        "REQ-12"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-a-slide-11-specific-option-to-use-a-screenshot-of-the-user-s-actual-prototype-by-allowing-the-user-to-upload-an-image-file-from-their-device-for-slide-11-and-ensure-that-uploaded-image-appears-in-the-on-screen-slide-preview-and-is-embedded-in-the-exported-deck",
-      "featureTitle": "Add a slide 11-specific option to use a screenshot of the user’s actual prototype by allowing the user to upload an image file from their device for slide 11, and ensure that uploaded image appears in the on-screen slide preview and is embedded in the exported deck.",
+      "featureId": "feature-replace-the-current-html-based-export-in-frontend-src-pptx-exportdecktopptx-ts-with-generation-of-a-real-powerpoint-pptx-file-download-embedding-the-slide-text-and-any-assigned-images-prefer-uploadeddataurl-over-url-into-the-pptx-while-preserving-the-existing-minimal-white-blue-academic-styling-and-16-9-layout",
+      "featureTitle": "Replace the current HTML-based export in frontend/src/pptx/exportDeckToPptx.ts with generation of a real PowerPoint .pptx file download, embedding the slide text and any assigned images (prefer uploadedDataUrl over url) into the PPTX while preserving the existing minimal white + blue academic styling and 16:9 layout.",
       "files": [
-        "frontend/src/components/deck/SlideCanvas.tsx",
-        "frontend/src/components/deck/SlideImageFields.tsx",
-        "frontend/src/components/deck/useDeckState.ts",
+        "frontend/src/components/deck/imageUrlUtils.ts",
+        "frontend/src/pptx/exportDeckToPptx.ts",
+        "frontend/src/pptx/imageEmbedding.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-13"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-export-ui-messaging-to-reflect-the-real-pptx-download-flow-remove-references-to-exporting-html-printing-to-pdf-or-screenshot-instructions-and-provide-clear-english-success-error-toasts-that-match-the-actual-exported-file-type-and-any-image-embed-limitations",
+      "featureTitle": "Update the export UI messaging to reflect the real PPTX download flow (remove references to exporting HTML, printing to PDF, or screenshot instructions) and provide clear English success/error toasts that match the actual exported file type and any image-embed limitations.",
+      "files": [
+        "frontend/src/components/deck/ExportPptxButton.tsx",
         "frontend/src/pptx/exportDeckToPptx.ts"
       ],
       "components": [
@@ -58,7 +55,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-7"
+        "REQ-14"
       ],
       "confidence": "high"
     }

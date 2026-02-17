@@ -74,15 +74,17 @@ export function SlideCanvas({ slideIndex }: SlideCanvasProps) {
           </ul>
         </div>
 
-        {/* Optional image - prefer uploaded screenshot for slide 11 */}
+        {/* Optional image - with fixed height container to ensure visibility */}
         {slideImage && (
           <div className="w-64 flex flex-col justify-center">
-            <RemoteImage
-              url={slideImage.url}
-              alt={slideImage.caption || slide.title}
-              className="w-full h-auto rounded-lg shadow-md"
-              uploadedDataUrl={slideImage.uploadedDataUrl}
-            />
+            <div className="min-h-[200px]">
+              <RemoteImage
+                url={slideImage.url}
+                alt={slideImage.caption || slide.title}
+                className="w-full"
+                uploadedDataUrl={slideImage.uploadedDataUrl}
+              />
+            </div>
             {slideImage.caption && (
               <p className="text-xs text-gray-500 mt-2 text-center italic">
                 {slideImage.caption}

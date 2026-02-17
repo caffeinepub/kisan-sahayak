@@ -1,84 +1,76 @@
-/**
- * Utility functions for image URL validation and guidance messages
- */
-
 export interface UrlClassification {
-  isGoogleImagesSearch: boolean;
   isLikelyDirectImage: boolean;
+  isGoogleImagesSearch: boolean;
   guidanceMessage: string | null;
 }
 
-/**
- * Classify an image URL and return guidance if needed
- */
 export function classifyImageUrl(url: string): UrlClassification {
   if (!url || !url.trim()) {
     return {
-      isGoogleImagesSearch: false,
       isLikelyDirectImage: false,
+      isGoogleImagesSearch: false,
       guidanceMessage: null
     };
   }
 
   const trimmedUrl = url.trim().toLowerCase();
 
-  // Check if it's a Google Images search results page
+  // Check for Google Images search URLs
   const isGoogleImagesSearch = 
     trimmedUrl.includes('google.com/search') && 
-    trimmedUrl.includes('tbm=isch');
-
-  // Check if it looks like a direct image URL
-  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp'];
-  const isLikelyDirectImage = imageExtensions.some(ext => 
-    trimmedUrl.includes(ext)
-  );
-
-  // Generate guidance message
-  let guidanceMessage: string | null = null;
+    (trimmedUrl.includes('tbm=isch') || trimmedUrl.includes('udm=2'));
 
   if (isGoogleImagesSearch) {
-    guidanceMessage = 
-      'This is a Google Images search results page, not a direct image URL. ' +
-      'To use an image: (1) Open this link in a new tab, (2) Click on an image you like, ' +
-      '(3) Right-click the image and select "Copy image address", (4) Paste that URL here. ' +
-      'Direct image URLs typically end in .jpg, .png, or .webp. ' +
-      'Alternatively, use the upload option below for Slide 11.';
-  } else if (!isLikelyDirectImage && trimmedUrl.startsWith('http')) {
-    guidanceMessage = 
-      'This URL may not be a direct image link. ' +
-      'For best results, use a URL that points directly to an image file (typically ending in .jpg, .png, or .webp). ' +
-      'If the image fails to load, try right-clicking the image and selecting "Copy image address".';
+    return {
+      isLikelyDirectImage: false,
+      isGoogleImagesSearch: true,
+      guidanceMessage: 'This is a Google Images search URL. Please right-click an image in the search results, select "Copy image address", and paste that direct link here instead. Or use the upload feature above.'
+    };
   }
 
+  // Check for direct image file extensions
+  const hasImageExtension = /\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?.*)?$/i.test(trimmedUrl);
+
+  if (hasImageExtension) {
+    return {
+      isLikelyDirectImage: true,
+      isGoogleImagesSearch: false,
+      guidanceMessage: null
+    };
+  }
+
+  // URL doesn't look like a direct image
   return {
-    isGoogleImagesSearch,
-    isLikelyDirectImage,
-    guidanceMessage
+    isLikelyDirectImage: false,
+    isGoogleImagesSearch: false,
+    guidanceMessage: 'This URL may not be a direct image link. For best results, use a URL ending in .jpg, .png, etc., or upload an image file above.'
   };
 }
 
-/**
- * Get a user-friendly error message for failed image loads
- */
 export function getImageLoadErrorMessage(url: string): string {
   const classification = classifyImageUrl(url);
   
   if (classification.isGoogleImagesSearch) {
-    return 'Cannot display Google Images search page. Please use a direct image URL (see guidance above).';
+    return 'Google Images search URLs cannot be displayed. Please use a direct image URL or upload an image.';
   }
   
-  return 'Failed to load image. The URL may not point to a valid image file, or the image may be blocked by CORS policy. Try using a direct image URL ending in .jpg, .png, or .webp.';
+  if (!classification.isLikelyDirectImage) {
+    return 'This URL does not appear to be a direct image link. Please use a URL ending in .jpg, .png, etc., or upload an image file.';
+  }
+  
+  return 'Failed to load image. The URL may be incorrect, the image may be unavailable, or CORS restrictions may be blocking access. Try uploading the image instead.';
 }
 
-/**
- * Get guidance text for export placeholders
- */
 export function getExportPlaceholderText(url: string): string {
   const classification = classifyImageUrl(url);
   
   if (classification.isGoogleImagesSearch) {
-    return '[Image not embedded: Google Images search URL provided instead of direct image link. Please replace with a direct image URL ending in .jpg, .png, or .webp]';
+    return 'Image not embedded: Google Images search URL detected. To include this image, please replace with a direct image URL (ending in .jpg, .png, etc.) or upload the image file.';
   }
   
-  return '[Image failed to load. Please verify the URL points to a valid image file.]';
+  if (!classification.isLikelyDirectImage) {
+    return 'Image not embedded: Non-direct URL detected. To include this image, please use a direct image URL (ending in .jpg, .png, etc.) or upload the image file.';
+  }
+  
+  return 'Image not embedded: Failed to load from URL. Please upload the image file or use a different URL.';
 }

@@ -1,39 +1,52 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-16T20:00:48.581Z",
-  "summary": "REQ-5/6/7 are largely implemented: slides 1–10 are prefilled with the specified Google Images search URLs, URL classification/guidance and stable preview/export placeholders are added, and slide 11 supports image upload with preview/export embedding via data URL. One REQ-5 acceptance criterion appears not fully met: URL edits may require an explicit save action rather than applying immediately.",
+  "generatedAt": "2026-02-17T12:12:00.615Z",
+  "summary": "REQ-12 appears addressed via a new RemoteImage component with minimum height, loading/error handling, and a specific placeholder for Google Images search URLs. However, REQ-13 is not implemented because exportDeckToPptx.ts still generates and downloads an HTML file, not a real .pptx. REQ-14 is also not implemented because the export success toast still instructs HTML/Print-to-PDF/screenshot workflows and does not reflect a true PPTX download flow.",
   "missing_requirements": [
     {
-      "id": "REQ-5",
-      "requirement": "If a user edits/removes an image for a slide, that change takes effect immediately in preview and export for that slide.",
-      "reason": "The image URL/caption editing flow appears to require an explicit save action (handleSave) to push changes into the Zustand store, so edits may not take effect immediately as typed. Removal does update immediately, but immediate edit propagation is not evidenced.",
+      "id": "REQ-13",
+      "requirement": "Replace the current HTML-based export in frontend/src/pptx/exportDeckToPptx.ts with generation of a real PowerPoint .pptx file download, embedding slide text and assigned images, preserving minimal white + blue styling and 16:9 layout.",
+      "reason": "The export function still generates HTML (generateSlidesHTML), creates a Blob of type text/html, and downloads a .html file (Kisan_Sahayak_Presentation.html). No evidence in the diff summary shows PPTX file generation or embedding images into a PPTX.",
       "evidence": [
-        "frontend/src/components/deck/SlideImageFields.tsx",
-        "frontend/src/components/deck/useDeckState.ts"
+        "frontend/src/pptx/exportDeckToPptx.ts"
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "requirement": "Update the export UI messaging to reflect the real PPTX download flow (no HTML/PDF/screenshot references) and provide clear English success/error/warning toasts matching actual export behavior and image-embed limitations.",
+      "reason": "The success toast explicitly references exporting an HTML file and instructs Print to PDF / import into PowerPoint / screenshots, which contradicts the required real PPTX download messaging.",
+      "evidence": [
+        "frontend/src/components/deck/ExportPptxButton.tsx"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Added pptxgenjs dependency and related type declarations, implying/adding PowerPoint export library support beyond the requested HTML-based export approach.",
-      "reason": "The BuildRequest explicitly lists as a non-goal: implementing a true .pptx binary export (current export is HTML-based). Adding pptxgenjs (and its .d.ts) is not requested and may conflict with the stated non-goal.",
+      "description": "Bulk multi-image upload mapper that auto-assigns uploads to slides 2–11 in a specific order, plus related store support for bulk image setting.",
+      "reason": "The BuildRequest focuses on fixing preview visibility and delivering true PPTX export + messaging. Bulk image upload mapping is not requested by REQ-12/13/14.",
       "evidence": [
-        "frontend/package.json",
-        "frontend/src/pptx/pptxgenjs.d.ts",
-        "frontend-file-summaries.txt"
+        "frontend-file-summaries.txt (BulkImageUploadMapper.tsx description)",
+        "frontend-file-summaries.txt (useDeckState.ts store extended with setBulkSlideImages)"
+      ]
+    },
+    {
+      "description": "Expanded per-slide image upload support for slides 2–11 (beyond only slide 11).",
+      "reason": "Not part of REQ-12/13/14; the request only requires preview visibility fixes and PPTX export/messaging updates.",
+      "evidence": [
+        "frontend-file-summaries.txt (SlideImageFields.tsx description)"
       ]
     }
   ],
-  "confidence": 0.74,
+  "confidence": 0.78,
   "changed_files": [
     "frontend-file-summaries.txt",
+    "frontend/src/components/deck/ExportPptxButton.tsx",
     "frontend/src/components/deck/RemoteImage.tsx",
     "frontend/src/components/deck/SlideCanvas.tsx",
-    "frontend/src/components/deck/SlideImageFields.tsx",
     "frontend/src/components/deck/imageUrlUtils.ts",
-    "frontend/src/components/deck/useDeckState.ts",
     "frontend/src/pptx/exportDeckToPptx.ts",
+    "frontend/src/pptx/imageEmbedding.ts",
     "project_state.json"
   ]
 }

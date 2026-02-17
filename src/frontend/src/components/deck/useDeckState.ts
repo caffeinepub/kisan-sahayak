@@ -3,7 +3,8 @@ import { create } from 'zustand';
 export interface SlideImage {
   url: string;
   caption: string;
-  uploadedDataUrl?: string; // For slide 11 screenshot upload
+  uploadedDataUrl?: string;
+  originalFilename?: string;
 }
 
 interface DeckState {
@@ -12,6 +13,7 @@ interface DeckState {
   setCurrentSlide: (index: number) => void;
   setSlideImage: (slideId: number, image: SlideImage) => void;
   removeSlideImage: (slideId: number) => void;
+  setBulkSlideImages: (mapping: Record<number, { dataUrl: string; filename: string }>) => void;
 }
 
 // Default image URLs for slides 1-10 as provided by the user
@@ -70,6 +72,20 @@ export const useDeckState = create<DeckState>((set) => ({
     set((state) => {
       const newImages = { ...state.slideImages };
       delete newImages[slideId];
+      return { slideImages: newImages };
+    }),
+  setBulkSlideImages: (mapping) =>
+    set((state) => {
+      const newImages = { ...state.slideImages };
+      Object.entries(mapping).forEach(([slideId, { dataUrl, filename }]) => {
+        const id = parseInt(slideId);
+        newImages[id] = {
+          url: newImages[id]?.url || '',
+          caption: newImages[id]?.caption || '',
+          uploadedDataUrl: dataUrl,
+          originalFilename: filename
+        };
+      });
       return { slideImages: newImages };
     })
 }));

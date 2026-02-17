@@ -4,7 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Image, X, Upload, AlertCircle } from 'lucide-react';
+import { Image, X, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useDeckState } from './useDeckState';
 import { slides } from '@/content/slides';
@@ -75,7 +75,8 @@ export function SlideImageFields({ slideIndex }: SlideImageFieldsProps) {
       setSlideImage(slide.id, {
         url: url.trim(),
         caption: caption.trim(),
-        uploadedDataUrl: dataUrl
+        uploadedDataUrl: dataUrl,
+        originalFilename: file.name
       });
     };
     reader.readAsDataURL(file);
@@ -94,7 +95,8 @@ export function SlideImageFields({ slideIndex }: SlideImageFieldsProps) {
     });
   };
 
-  const isSlide11 = slide.id === 11;
+  // Allow uploads for slides 2-11
+  const allowUpload = slide.id >= 2 && slide.id <= 11;
 
   return (
     <Card>
@@ -104,17 +106,17 @@ export function SlideImageFields({ slideIndex }: SlideImageFieldsProps) {
           Add Image to Slide {slide.id}
         </CardTitle>
         <CardDescription>
-          {isSlide11 
-            ? 'Upload a screenshot of your prototype or paste an image URL'
-            : 'Paste a direct image URL (e.g., from Google Images) and optional caption'
+          {allowUpload 
+            ? 'Upload an image or paste a direct image URL with optional caption'
+            : 'Paste a direct image URL and optional caption'
           }
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Upload option for Slide 11 */}
-        {isSlide11 && (
+        {/* Upload option for slides 2-11 */}
+        {allowUpload && (
           <div className="space-y-2">
-            <Label htmlFor="image-upload">Upload Screenshot (PNG/JPG)</Label>
+            <Label htmlFor="image-upload">Upload Image (PNG/JPG)</Label>
             <div className="flex gap-2">
               <Input
                 ref={fileInputRef}
@@ -137,7 +139,12 @@ export function SlideImageFields({ slideIndex }: SlideImageFieldsProps) {
             </div>
             {uploadedFile && (
               <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded text-sm text-green-700">
-                ✓ Screenshot uploaded successfully
+                ✓ Image uploaded successfully
+                {existingImage?.originalFilename && (
+                  <span className="block text-xs text-green-600 mt-1">
+                    {existingImage.originalFilename}
+                  </span>
+                )}
               </div>
             )}
           </div>
@@ -146,7 +153,7 @@ export function SlideImageFields({ slideIndex }: SlideImageFieldsProps) {
         {/* URL input (available for all slides) */}
         <div className="space-y-2">
           <Label htmlFor="image-url">
-            {isSlide11 ? 'Or use Image URL' : 'Image URL'}
+            {allowUpload ? 'Or use Image URL' : 'Image URL'}
           </Label>
           <Input
             id="image-url"

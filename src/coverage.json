@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-16T20:00:48.584Z",
+  "generatedAt": "2026-02-17T12:12:00.618Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -11,49 +11,44 @@
     "implemented": 3,
     "items": [
       {
-        "id": "REQ-5",
-        "summary": "Pre-fill the app’s per-slide image settings for slides 1–10 using the exact URLs provided by the user (Google Images search query URLs), mapped to the corresponding slide numbers, so the user sees images configured immediately when opening each slide’s image panel.",
+        "id": "REQ-12",
+        "summary": "Fix the on-screen slide preview so assigned images actually render at a visible size whenever a slide has either (a) an uploaded image data URL or (b) a direct image URL, without collapsing to zero height or being hidden by the loading overlay.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/deck/useDeckState.ts",
-          "frontend/src/components/deck/SlideImageFields.tsx"
+          "frontend/src/components/deck/RemoteImage.tsx",
+          "frontend/src/components/deck/SlideCanvas.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/deck/useDeckState.ts",
-          "frontend/src/components/deck/SlideImageFields.tsx"
+          "frontend/src/components/deck/RemoteImage.tsx",
+          "frontend/src/components/deck/SlideCanvas.tsx"
         ]
       },
       {
-        "id": "REQ-6",
-        "summary": "Add clear, English in-app validation and guidance for image URLs that are not direct image assets (including Google Images search result URLs like `google.com/search?tbm=isch...`), so users understand why an image may not load/export and how to fix it by providing a direct image URL.",
+        "id": "REQ-13",
+        "summary": "Replace the current HTML-based export in frontend/src/pptx/exportDeckToPptx.ts with generation of a real PowerPoint .pptx file download, embedding the slide text and any assigned images (prefer uploadedDataUrl over url) into the PPTX while preserving the existing minimal white + blue academic styling and 16:9 layout.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/deck/imageUrlUtils.ts",
-          "frontend/src/components/deck/SlideImageFields.tsx",
-          "frontend/src/components/deck/RemoteImage.tsx",
-          "frontend/src/pptx/exportDeckToPptx.ts"
+          "frontend/src/pptx/exportDeckToPptx.ts",
+          "frontend/src/pptx/pptxgenjs.d.ts",
+          "frontend/src/pptx/imageEmbedding.ts",
+          "frontend/src/components/deck/imageUrlUtils.ts"
         ],
         "matchedFiles": [
-          "frontend/src/components/deck/imageUrlUtils.ts",
-          "frontend/src/components/deck/SlideImageFields.tsx",
-          "frontend/src/components/deck/RemoteImage.tsx",
-          "frontend/src/pptx/exportDeckToPptx.ts"
+          "frontend/src/pptx/exportDeckToPptx.ts",
+          "frontend/src/pptx/imageEmbedding.ts",
+          "frontend/src/components/deck/imageUrlUtils.ts"
         ]
       },
       {
-        "id": "REQ-7",
-        "summary": "Add a slide 11-specific option to use a screenshot of the user’s actual prototype by allowing the user to upload an image file from their device for slide 11, and ensure that uploaded image appears in the on-screen slide preview and is embedded in the exported deck.",
+        "id": "REQ-14",
+        "summary": "Update the export UI messaging to reflect the real PPTX download flow (remove references to exporting HTML, printing to PDF, or screenshot instructions) and provide clear English success/error toasts that match the actual exported file type and any image-embed limitations.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/deck/useDeckState.ts",
-          "frontend/src/components/deck/SlideImageFields.tsx",
-          "frontend/src/components/deck/SlideCanvas.tsx",
+          "frontend/src/components/deck/ExportPptxButton.tsx",
           "frontend/src/pptx/exportDeckToPptx.ts"
         ],
         "matchedFiles": [
-          "frontend/src/components/deck/useDeckState.ts",
-          "frontend/src/components/deck/SlideImageFields.tsx",
-          "frontend/src/components/deck/SlideCanvas.tsx",
+          "frontend/src/components/deck/ExportPptxButton.tsx",
           "frontend/src/pptx/exportDeckToPptx.ts"
         ]
       }
@@ -61,16 +56,15 @@
   },
   "changedFiles": [
     "build-request.json",
-    "build-template/README.md",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/src/components/deck/ExportPptxButton.tsx",
     "frontend/src/components/deck/RemoteImage.tsx",
     "frontend/src/components/deck/SlideCanvas.tsx",
-    "frontend/src/components/deck/SlideImageFields.tsx",
     "frontend/src/components/deck/imageUrlUtils.ts",
-    "frontend/src/components/deck/useDeckState.ts",
     "frontend/src/pptx/exportDeckToPptx.ts",
+    "frontend/src/pptx/imageEmbedding.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

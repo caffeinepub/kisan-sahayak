@@ -1,90 +1,79 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Prefill slide image URLs (1–10), add non-direct URL guidance, and enable slide 11 screenshot upload",
+  "title": "Fix slide preview image visibility and implement true PPTX export download",
   "requirements": [
     {
-      "id": "REQ-5",
-      "summary": "Pre-fill slides 1–10 with the user-provided Google Images query URLs so each slide’s image panel shows a configured URL immediately.",
+      "id": "REQ-12",
+      "summary": "Ensure slide preview images render at a visible size for uploaded data URLs and direct image URLs, and never get stuck behind the loading overlay; keep Google Images search URL guidance placeholder.",
       "acceptanceCriteria": [
-        "On first load (fresh browser session), slides 1–10 show an image URL already filled in that matches the user-provided URL for that slide exactly.",
-        "The pre-filled mapping is: (1) https://www.google.com/search?tbm=isch&q=farmer+using+smartphone+in+field, (2) https://www.google.com/search?tbm=isch&q=agriculture+field+research+workers, (3) https://www.google.com/search?tbm=isch&q=manual+farming+labour+hard+work, (4) https://www.google.com/search?tbm=isch&q=farmer+portrait+rural+worker, (5) https://www.google.com/search?tbm=isch&q=community+training+agriculture+workshop, (6) https://www.google.com/search?tbm=isch&q=smartphone+app+in+hand+outdoor, (7) https://www.google.com/search?tbm=isch&q=farmer+using+mobile+phone+in+field, (8) https://www.google.com/search?tbm=isch&q=successful+agriculture+growth+farm, (9) https://www.google.com/search?tbm=isch&q=smart+farming+technology+drone, (10) https://www.google.com/search?tbm=isch&q=happy+farmer+harvest+success.",
-        "If a user edits/removes an image for a slide, that change takes effect immediately in preview and export for that slide."
+        "When a slide has slideImages[slideId].uploadedDataUrl set, the slide preview shows the image reliably (no zero-height container, no perpetual overlay).",
+        "When a slide has a direct image URL (e.g., ending in .jpg/.png), the slide preview shows the image reliably.",
+        "If a slide uses a Google Images search URL (google.com/search?tbm=isch...), the preview shows the existing guidance placeholder instead of a broken/blank image area."
       ],
       "file_operations": [
-        {
-          "path": "frontend/src/components/deck/useDeckState.ts",
-          "operation": "modify",
-          "description": "Initialize the Zustand store with default slideImages for slide IDs 1–10 using the exact provided URLs so the app is prefilled on first load; keep existing setters/removal so edits/removals update preview/export immediately."
-        },
-        {
-          "path": "frontend/src/components/deck/SlideImageFields.tsx",
-          "operation": "modify",
-          "description": "Fix URL/caption form state to reliably reflect the currently selected slide (sync local state when slideIndex changes and when the store’s existing image changes) so prefilled URLs appear immediately when opening each slide’s image panel. Verify the component's usage instructions before implementing."
-        }
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "summary": "Provide English validation and guidance for non-direct image URLs (including Google Images search URLs) and ensure preview/export show stable placeholders without breaking.",
-      "acceptanceCriteria": [
-        "When an image URL looks like a Google Images search results page (contains `google.com/search` and `tbm=isch`) or otherwise fails to load, the UI shows an English message explaining that the link is not a direct image file and may not embed in the slide/export.",
-        "The message provides actionable steps in English (e.g., open the link, click an image, then use a direct image address URL that typically ends in .jpg/.png/.webp, or use an upload option if available).",
-        "The slide preview does not crash when such URLs are used; it shows a stable error state with the guidance message.",
-        "Export still completes even if some images fail to load; the exported file includes the same guidance/error placeholder for failed images rather than breaking the export."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/deck/imageUrlUtils.ts",
-          "operation": "create",
-          "description": "Add shared, client-side helpers to classify image URL inputs (e.g., detect Google Images search result URLs and detect likely direct image asset URLs) and to return English guidance text used consistently by the image panel, preview placeholder, and export placeholder."
-        },
-        {
-          "path": "frontend/src/components/deck/SlideImageFields.tsx",
-          "operation": "modify",
-          "description": "Add English inline validation/guidance under the URL field when the input looks like a non-direct URL (including `google.com/search` with `tbm=isch`), explaining why it may not embed and how to obtain a direct image URL (and mentioning upload where applicable). Verify the component's usage instructions before implementing."
-        },
         {
           "path": "frontend/src/components/deck/RemoteImage.tsx",
           "operation": "modify",
-          "description": "Enhance the preview image renderer to (1) proactively show a stable English guidance placeholder for known non-direct URLs and (2) show a stable English guidance placeholder on load failure (instead of only 'Failed to load image'), without crashing the slide preview."
-        },
-        {
-          "path": "frontend/src/pptx/exportDeckToPptx.ts",
-          "operation": "modify",
-          "description": "Update HTML export generation so it never breaks when images fail: for non-direct/unsupported URLs, emit an English guidance placeholder block instead of an <img>; for other URLs, keep <img> but include a fallback placeholder message in the exported HTML so the export remains readable even if the image can’t be loaded."
-        }
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "summary": "Add slide 11 screenshot upload support and ensure uploaded image appears in preview and is embedded in exported HTML for offline viewing.",
-      "acceptanceCriteria": [
-        "When slide 11 is selected, the image panel provides an English-labeled control to upload an image file (e.g., PNG/JPG) in addition to the URL input option.",
-        "After upload, slide 11 renders the uploaded screenshot in the slide preview (without requiring a URL).",
-        "Export includes the slide 11 uploaded screenshot (embedded as a data URL or equivalent client-side embedding) so it remains visible when the exported file is opened offline.",
-        "Users can remove/replace the uploaded screenshot for slide 11 and the preview/export updates accordingly."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/deck/useDeckState.ts",
-          "operation": "modify",
-          "description": "Extend slide image state to support an optional uploaded screenshot representation for slide 11 (e.g., storing a data URL alongside the existing url/caption) and add setters/removers needed to replace/remove the upload while keeping existing URL-based behavior for other slides."
-        },
-        {
-          "path": "frontend/src/components/deck/SlideImageFields.tsx",
-          "operation": "modify",
-          "description": "When slide 11 is selected, render an English-labeled file upload control (PNG/JPG) in addition to the URL input; read the file client-side into a data URL, store it in deck state, and provide remove/replace controls that update preview/export immediately. Verify the component's usage instructions before implementing."
+          "description": "Fix preview rendering by (1) resetting loading/error state when the effective image source changes, (2) ensuring the <img> uses sizing that does not depend on a parent with an explicit height (avoid h-full with an auto-height container), and (3) ensuring the loading overlay cannot permanently obscure the image once loaded."
         },
         {
           "path": "frontend/src/components/deck/SlideCanvas.tsx",
           "operation": "modify",
-          "description": "Update slide rendering so slide 11 prefers displaying the uploaded screenshot data URL (when present) in the preview image area, falling back to the URL-based image when no upload is set."
+          "description": "Make the slide preview image area always allocate visible space (e.g., fixed height and/or aspect ratio) so the RemoteImage container cannot collapse to zero height; keep the layout consistent with the current white + blue academic styling."
+        }
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "summary": "Replace HTML-based export with client-side generation of a real editable .pptx file (16:9) embedding slide text and images (prefer uploadedDataUrl), preserving minimal white + blue styling and warning on non-direct image URLs without blocking export.",
+      "acceptanceCriteria": [
+        "Clicking “Export Presentation” downloads a file with a .pptx extension (not .html).",
+        "The downloaded .pptx opens in PowerPoint/Google Slides as an editable presentation with 11 slides in 16:9.",
+        "For slides with uploadedDataUrl images, the image is embedded into the PPTX and visible when opened.",
+        "For slides with non-direct URLs (e.g., Google Images search URLs), the export flow provides a clear warning in English that those URLs cannot be embedded unless replaced with a direct image URL or an upload, and the export still completes (with that slide missing the image or using a placeholder text box)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pptx/exportDeckToPptx.ts",
+          "operation": "modify",
+          "description": "Implement true PPTX generation and download (not HTML) using a client-side PPTX generator; build 11 slides in 16:9, apply the existing minimal white + blue styling, add text content, and embed images by preferring uploadedDataUrl over remote URL. For non-direct image URLs, omit the image and insert a placeholder text box while collecting a user-facing warning message."
+        },
+        {
+          "path": "frontend/src/pptx/pptxgenjs.d.ts",
+          "operation": "modify",
+          "description": "Add minimal TypeScript declarations needed for the PPTX generator used by exportDeckToPptx.ts so the build is type-safe (declare the PPTX API surface used for layout, slide creation, text, shapes, images, and file writing)."
+        },
+        {
+          "path": "frontend/src/pptx/imageEmbedding.ts",
+          "operation": "create",
+          "description": "Add helper utilities for export to convert uploaded data URLs and fetchable direct image URLs into embed-ready image data (including graceful failure handling and a consistent way to detect/label non-embeddable URLs)."
+        },
+        {
+          "path": "frontend/src/components/deck/imageUrlUtils.ts",
+          "operation": "modify",
+          "description": "Extend/align URL classification and export placeholder/warning text to ensure non-direct URLs (including Google Images search URLs) are consistently flagged as non-embeddable for PPTX export, with clear English guidance on how to fix (use a direct image URL or upload)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "summary": "Update export UI messaging and toasts to reflect real PPTX download behavior, including success, failure, and non-blocking warnings for non-embeddable image URLs.",
+      "acceptanceCriteria": [
+        "On successful export, the toast message states that a .pptx file was downloaded/generated (no mention of HTML/PDF/screenshot workflows).",
+        "On export failure, the toast provides an English error message and the app returns to a non-loading state.",
+        "If some slides cannot embed remote images due to non-direct URLs, the user sees an English warning explaining how to fix it (use a direct image URL or upload) without breaking the export flow."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/deck/ExportPptxButton.tsx",
+          "operation": "modify",
+          "description": "Update export flow messaging: show a success toast explicitly for .pptx download, show a clear English error toast on failure while always returning to non-loading state, and display a non-blocking English warning toast if exportDeckToPptx reports slides with non-embeddable (non-direct) image URLs."
         },
         {
           "path": "frontend/src/pptx/exportDeckToPptx.ts",
           "operation": "modify",
-          "description": "Ensure slide 11 export embeds the uploaded screenshot via its stored data URL (so it works offline), and ensure remove/replace behavior is reflected in the exported HTML."
+          "description": "Adjust exportDeckToPptx to return structured results (e.g., warnings list and success indication) so the UI can accurately toast success/warning/error for the real PPTX generation flow."
         }
       ]
     }
